@@ -1,0 +1,50 @@
+# Arquivos e configurações do Visual Studio
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Pastas de compilação e build
+bin/
+obj/
+TestResults/
+
+# Logs e arquivos temporários
+logs/
+*.log
+**/*.cache
+**/*.bak
+**/*.swp
+**/*.tmp
+
+# Configurações locais
+appsettings.Development.json
+appsettings.Local.json
+secrets.json
+.env
+*.key
+
+# Arquivos gerados automaticamente
+*.dll
+*.exe
+*.pdb
+*.db
+*.sqlite
+*.mdf
+*.ldf
+
+# Pacotes e dependências
+node_modules/
+packages/
+*.nupkg
+project.lock.json
+project.assets.json
+
+# Arquivos do Rider / JetBrains
+.idea/
+*.iml
+
+# Arquivos do macOS e Linux
+.DS_Store
+*.pid
