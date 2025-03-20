@@ -2,6 +2,7 @@
 using OdontoPrevAPI.Models;
 using OdontoPrevAPI.Repositories;
 using OdontoPrevAPI.Data;
+using OdontoPrevAPI.Dtos;
 
 namespace OdontoPrevAPI.Controllers
 {
@@ -42,13 +43,41 @@ namespace OdontoPrevAPI.Controllers
         /// Cadastra um novo tratamento.
         /// </summary>
         [HttpPost]
-        public async Task<ActionResult> Post([FromBody] Tratamento tratamento)
+        public async Task<ActionResult> Post([FromBody] TratamentoDTO tratamentoDto)
         {
-            if (tratamento == null)
+            if (tratamentoDto == null)
                 return BadRequest("Os dados do tratamento são obrigatórios.");
+
+            var tratamento = new Tratamento
+            {
+                Descricao = tratamentoDto.Descricao,
+                Tipo = tratamentoDto.Tipo,
+                Custo = tratamentoDto.Custo
+            };
 
             await _repository.Add(tratamento);
             return CreatedAtAction(nameof(Get), new { id = tratamento.Id }, tratamento);
+        }
+
+        /// <summary>
+        /// Atualiza um tratamento existente.
+        /// </summary>
+        [HttpPut("{id}")]
+        public async Task<ActionResult> Put(int id, [FromBody] TratamentoDTO tratamentoDto)
+        {
+            if (id != tratamentoDto.Id)
+                return BadRequest("O ID na URL não corresponde ao do tratamento.");
+
+            var tratamentoExistente = await _repository.GetById(id);
+            if (tratamentoExistente == null)
+                return NotFound($"Tratamento {id} não encontrado.");
+
+            tratamentoExistente.Descricao = tratamentoDto.Descricao;
+            tratamentoExistente.Tipo = tratamentoDto.Tipo;
+            tratamentoExistente.Custo = tratamentoDto.Custo;
+
+            await _repository.Update(tratamentoExistente);
+            return NoContent();
         }
 
         /// <summary>
