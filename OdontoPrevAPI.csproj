@@ -9,9 +9,22 @@
 
 	<ItemGroup>
 		<PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.7" />
+		<PackageReference Include="Microsoft.ML" Version="4.0.2" />
+		<PackageReference Include="Microsoft.ML.AutoML" Version="0.22.2" />
+		<PackageReference Include="Microsoft.ML.DataView" Version="4.0.2" />
 		<PackageReference Include="Oracle.EntityFrameworkCore" Version="9.23.60" />
 		<PackageReference Include="Oracle.ManagedDataAccess" Version="23.7.0" />
 		<PackageReference Include="Swashbuckle.AspNetCore" Version="7.3.1" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\OdontoPrevMLTrainer\OdontoPrevMLTrainer.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Update="ComplexidadeModel.mlnet">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
 	</ItemGroup>
 
 </Project>

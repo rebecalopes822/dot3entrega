@@ -2,8 +2,6 @@
 using OdontoPrevAPI.Models;
 using OdontoPrevAPI.Repositories;
 using OdontoPrevAPI.Data;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace OdontoPrevAPI.Controllers
 {

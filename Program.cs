@@ -2,6 +2,7 @@
 using Microsoft.OpenApi.Models;
 using OdontoPrevAPI.Data;
 using OdontoPrevAPI.Repositories;
+using OdontoPrevAPI.Services;
 using OdontoPrevAPI.Utils;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -42,6 +43,8 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowAllOrigins",
         builder => builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
 });
+
+builder.Services.AddHttpClient<ViaCepService>();
 
 var app = builder.Build();
 

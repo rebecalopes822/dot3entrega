@@ -4,146 +4,92 @@ API desenvolvida em **ASP.NET Core Web API** para gerenciamento de pacientes, tr
 
 ## Integrantes do Grupo
 
-- **Giovanna Lima** - RM: RM553369
-- **Lorenzo Vaz** - RM: RM553941
-- **Rebeca Lopes** - RM: RM553764
+- **Giovanna Lima** - RM: RM553369  
+- **Felipe Arcanjo** - RM: RM554018  
+- **Rebeca Lopes** - RM: RM553764  
 
 ## Arquitetura do Projeto
 
-Optamos por uma **arquitetura monolítica**, onde toda a lógica da aplicação está concentrada em uma única API. Essa abordagem foi escolhida por ser mais simples de desenvolver, testar e manter dentro do escopo do projeto.
-
-Caso o sistema cresça no futuro, há a possibilidade de migração para uma arquitetura baseada em **microservices**, separando os módulos de pacientes, tratamentos e sinistros em serviços independentes.
+Optamos por uma **arquitetura monolítica**, adequada ao escopo da solução. Em caso de expansão, pode ser migrada para uma arquitetura de **microservices**.
 
 ## Design Patterns Utilizados
 
-- **Singleton** → Implementado na classe `ConfigManager`, responsável por garantir uma única instância da configuração do banco de dados.
-- **Repository Pattern** → Criamos repositórios (`PacienteRepository`, `TratamentoRepository`, `SinistroRepository`) para centralizar a lógica de acesso ao banco de dados, garantindo um código mais organizado e reutilizável.
+- **Singleton** → Classe `ConfigManager` para centralizar a string de conexão.
+- **Repository Pattern** → Separação da lógica de acesso a dados com `PacienteRepository`, `TratamentoRepository` e `SinistroRepository`.
+
+## Práticas de Clean Code Aplicadas
+
+- **Separação de responsabilidades**: Controllers, DTOs, Services e Repositories organizados por domínio.
+- **Nomenclatura significativa**: métodos e variáveis com nomes autoexplicativos.
+- **Validações claras**: todos os endpoints aplicam validações de entrada para garantir integridade de dados.
+- **Injeção de dependência**: via `services.AddScoped`, promovendo desacoplamento e testabilidade.
+
+### Integração com API Externa (ViaCEP)
+
+A API ViaCEP é utilizada para buscar automaticamente os dados de endereço com base no CEP informado, melhorando a qualidade dos dados e reduzindo erros de digitação.
+
+### Funcionalidade de IA Generativa
+
+A aplicação prevê a **complexidade do tratamento odontológico** com base em 3 parâmetros:
+
+- Tipo de tratamento  
+- Idade do paciente  
+- Se está sintomático ou não  
+
+A IA foi treinada com um conjunto de 500 amostras e integrada via ML.NET.
+
+- **Finalidade**: auxiliar na triagem e classificação clínica dos atendimentos, reduzindo a chance de sinistros por má categorização.
+
+Exemplo de requisição para a IA:
+
+```json
+{
+  "tipoTratamento": "Ortodontia",
+  "idade": 35,
+  "sintomatico": "Sim"
+}
+```
+
+Resposta esperada:
+
+```json
+{
+  "complexidadePrevista": "Alta"
+}
+```
+
+## Testes Implementados
+
+Utilizamos **xUnit** para garantir a qualidade e confiabilidade da aplicação:
+
+- **PacienteRepositoryTests**:
+  - Testa o método de adicionar pacientes com banco de dados em memória.
+- **ViaCepServiceTests**:
+  - Simula chamadas HTTP e valida a resposta da API externa (ViaCEP).
+
+Ambos os testes cobrem os principais fluxos críticos, com mocks e asserts claros.
 
 ## Como Rodar a API
 
-### Clonar e Rodar a API no Visual Studio 2022
+### Clonar e Executar
 
-1. **Clonar o Repositório do GitHub**
+1. **Clone o projeto** no Visual Studio 2022.  
+2. Defina o projeto API como projeto de inicialização.  
+3. Execute `dotnet restore` no terminal.  
+4. Pressione `F5` ou use `dotnet run`.
 
-   - Abrir o Visual Studio 2022.
-   - Clicar em "Clonar um repositório".
-   - Colar a URL do GitHub e escolher um local para salvar.
-   - Clicar em "Clonar" e aguardar o download.
+Acesse o Swagger via:
 
-2. **Abrir e Configurar o Projeto**
-
-   - Abrir o arquivo `.sln` do projeto (se não abrir automaticamente).
-   - No Gerenciador de Soluções (`Ctrl + Alt + L`), clicar com o botão direito no projeto API e selecionar "Definir como Projeto de Inicialização".
-
-3. **Restaurar Dependências**
-
-   - No Visual Studio, abrir "Gerenciador de Pacotes NuGet".
-   - Executar o comando:
-     ```sh
-     dotnet restore
-     ```
-
-4. **Configurar o Banco de Dados (se necessário)**
-
-   - Verificar se o banco de dados está rodando.
-   - Ajustar a string de conexão no `appsettings.json`.
-
-5. **Executar a API**
-
-   - **Opção 1: Pelo Visual Studio**
-     - Pressionar `F5` para rodar.
-   - **Opção 2: Pelo Terminal**
-     - No terminal, navegar até a pasta do projeto e rodar:
-       ```sh
-       dotnet run
-       ```
-
-6. **Testar a API**
-
-   - Acessar no navegador:
-     ```
-     http://localhost:5000/swagger
-     ```
-   - Testar via Postman, se necessário.
-
-## Exemplos de Testes
-
-### Criando um Paciente (POST)
-
-```json
-{
-  "nome": "Felipe Almeida",
-  "email": "felipe.almeida@email.com",
-  "dataNascimento": "1990-03-15T00:00:00",
-  "telefone": "11999887766",
-  "generoId": 1,
-  "enderecoId": 8
-}
 ```
-
-### Criando um Tratamento (POST)
-
-```json
-{
-  "id": 3,
-  "descricao": "Canal Dentário",
-  "tipo": "Urgência",
-  "custo": 1200
-}
-```
-
-### Criando um Sinistro (POST)
-
-```json
-{
-  "pacienteId": 18,
-  "tratamentoId": 5,
-  "dataOcorrencia": "2025-03-18T02:55:38.901Z",
-  "status": "Pendente"
-}
-```
-
-### Atualizando um Paciente (PUT)
-
-```json
-{
-  "id": 18,
-  "nome": "Ricardo Mendes",
-  "email": "ricardo.mendes@email.com",
-  "dataNascimento": "1988-07-22T00:00:00",
-  "telefone": "(11) 91234-5678",
-  "generoId": 1,
-  "enderecoId": 8
-}
-```
-
-### Atualizando um Tratamento (PUT)
-
-```json
-{
-  "id": 2,
-  "descricao": "Extração de dente",
-  "tipo": "Cirúrgico",
-  "custo": 250.00
-}
-```
-
-### Atualizando um Sinistro (PUT)
-
-```json
-{
-  "id": 10,
-  "pacienteId": 12,
-  "tratamentoId": 2,
-  "dataOcorrencia": "2024-04-05T00:00:00",
-  "status": "Em andamento"
-}
+http://localhost:5000/swagger
 ```
 
 ## Tecnologias Utilizadas
 
-- **.NET 8.0**
-- **Entity Framework Core**
-- **Oracle Database**
-- **Swagger / OpenAPI**
-- **Postman para testes**
+- ASP.NET Core 8  
+- Entity Framework Core  
+- Oracle Database  
+- ML.NET  
+- Swagger / OpenAPI  
+- xUnit / Moq  
+- Postman (testes manuais)
